@@ -14,6 +14,7 @@ public class GameController {
     public Mono<String> playGame(@PathVariable String gameName) {
         return switch (gameName) {
             case "word-ladder" -> Mono.just("games/word-ladder");
+            case "number-sequence" -> Mono.just("games/number-sequence");
             default -> Mono.just("redirect:/");
         };
     }

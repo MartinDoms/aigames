@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Sequence - AI Games</title>
+    
+    <!-- Vite generated CSS -->
+    <link rel="stylesheet" th:href="@{/css/main-CUUXm0-U.css}" href="/css/main-CUUXm0-U.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div x-data="numberSequence" class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center mb-4">
+                <a href="/" class="mr-4 text-blue-600 hover:text-blue-800 transition-colors">
+                    ← Back to Games
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800">🔢 Number Sequence</h1>
+            </div>
+            <p class="text-gray-600">Find the pattern and complete the sequence</p>
+        </header>
+
+        <!-- Loading State -->
+        <div x-show="loading" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading...</p>
+        </div>
+
+        <!-- Game Area -->
+        <div x-show="!loading" class="max-w-4xl mx-auto">
+            <!-- Game Info -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6 text-center">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-gray-700">Streak</h3>
+                        <span class="text-2xl font-bold text-blue-600" x-text="streak"></span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-gray-700">Score</h3>
+                        <span class="text-2xl font-bold text-green-600" x-text="score"></span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-lg font-semibold text-gray-700">Difficulty</h3>
+                        <span class="text-lg font-medium text-purple-600" x-text="getDifficultyName()"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sequence Display -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-4">What's the next number?</h3>
+                    <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
+                        <template x-for="(number, index) in currentSequence" :key="index">
+                            <div class="w-16 h-16 bg-blue-100 border-2 border-blue-300 rounded-lg flex items-center justify-center">
+                                <span class="text-xl font-bold text-blue-800" x-text="number"></span>
+                            </div>
+                        </template>
+                        <div class="text-3xl text-gray-400 mx-2">→</div>
+                        <div class="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
+                            <span class="text-2xl text-gray-400">?</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div x-show="!showResult" class="text-center">
+                    <div class="max-w-md mx-auto flex gap-3">
+                        <input 
+                            type="number" 
+                            x-model="userAnswer"
+                            @keydown="handleKeyPress($event)"
+                            class="flex-1 px-4 py-3 text-xl text-center border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder="Enter your answer...">
+                        <button 
+                            @click="submitAnswer()"
+                            class="btn-primary px-6 py-3">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Result Display -->
+                <div x-show="showResult" class="text-center">
+                    <div class="mb-4" :class="{
+                        'text-green-600': isCorrect,
+                        'text-red-600': !isCorrect
+                    }">
+                        <div class="text-6xl mb-2">
+                            <span x-show="isCorrect">🎉</span>
+                            <span x-show="!isCorrect">❌</span>
+                        </div>
+                        <p class="text-xl font-semibold" x-text="resultMessage"></p>
+                        <p x-show="!isCorrect" class="text-lg mt-2">
+                            The correct answer was: <span class="font-bold" x-text="correctAnswer"></span>
+                        </p>
+                    </div>
+
+                    <!-- Show Hint -->
+                    <div x-show="currentHint" class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-4">
+                        <h4 class="font-semibold text-yellow-800 mb-2">Pattern:</h4>
+                        <p class="text-yellow-700" x-text="currentHint"></p>
+                    </div>
+
+                    <div class="mt-6">
+                        <button 
+                            @click="nextPuzzle()"
+                            class="btn-primary">
+                            Next Puzzle
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-wrap gap-4 justify-center mb-6">
+                <button 
+                    x-show="!showResult"
+                    @click="newPuzzle()"
+                    class="btn-secondary">
+                    New Puzzle
+                </button>
+                <button 
+                    x-show="!showResult && !showHint"
+                    @click="getHint()"
+                    class="btn-outline">
+                    Get Hint
+                </button>
+                <button 
+                    x-show="showHint && !showResult"
+                    @click="hideCurrentHint()"
+                    class="btn-outline">
+                    Hide Hint
+                </button>
+            </div>
+
+            <!-- Current Hint (when requested before answering) -->
+            <div x-show="showHint && currentHint && !showResult" class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-6">
+                <h4 class="font-semibold text-yellow-800 mb-2">Hint:</h4>
+                <p class="text-yellow-700" x-text="currentHint"></p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Statistics</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="p-3 bg-gray-50 rounded-lg">
+                        <div class="text-xl font-bold text-gray-800" x-text="stats.total"></div>
+                        <div class="text-sm text-gray-600">Total</div>
+                    </div>
+                    <div class="p-3 bg-green-50 rounded-lg">
+                        <div class="text-xl font-bold text-green-700" x-text="stats.correct"></div>
+                        <div class="text-sm text-gray-600">Correct</div>
+                    </div>
+                    <div class="p-3 bg-red-50 rounded-lg">
+                        <div class="text-xl font-bold text-red-700" x-text="stats.incorrect"></div>
+                        <div class="text-sm text-gray-600">Incorrect</div>
+                    </div>
+                    <div class="p-3 bg-blue-50 rounded-lg">
+                        <div class="text-xl font-bold text-blue-700" x-text="getAccuracy()"></div>
+                        <div class="text-sm text-gray-600">Accuracy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Rules -->
+            <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                <h4 class="font-semibold text-blue-800 mb-2">How to Play:</h4>
+                <ul class="text-blue-700 text-sm space-y-1">
+                    <li>• Study the sequence of numbers to find the pattern</li>
+                    <li>• Enter what you think the next number should be</li>
+                    <li>• Patterns can be arithmetic, geometric, fibonacci, squares, primes, and more</li>
+                    <li>• Use hints if you're stuck, but try to solve it yourself first</li>
+                    <li>• Build up streaks of correct answers for higher scores</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vite generated JS -->
+    <script type="module" th:src="@{/js/number-sequence-DmE7JCgG.js}" src="/js/number-sequence-DmE7JCgG.js"></script>
+</body>
+</html>

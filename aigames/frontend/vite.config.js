@@ -12,6 +12,7 @@ export default defineConfig({
       input: {
         landing: resolve(__dirname, 'src/js/landing.js'),
         'word-ladder': resolve(__dirname, 'src/js/word-ladder.js'),
+        'number-sequence': resolve(__dirname, 'src/js/number-sequence.js'),
       },
       output: {
         entryFileNames: 'js/[name]-[hash].js',

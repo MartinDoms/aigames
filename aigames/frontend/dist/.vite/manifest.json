@@ -1,31 +1,43 @@
 {
-  "_module.esm-!~{003}~.js": {
-    "file": "css/module-BpBKqQfe.css",
-    "src": "_module.esm-!~{003}~.js"
+  "_main-!~{004}~.js": {
+    "file": "css/main-CUUXm0-U.css",
+    "src": "_main-!~{004}~.js"
   },
-  "_module.esm-DWwwSYNZ.js": {
-    "file": "js/module.esm-DWwwSYNZ.js",
-    "name": "module.esm",
-    "css": [
-      "css/module-BpBKqQfe.css"
-    ]
+  "_module.esm-Cm4okMZt.js": {
+    "file": "js/module.esm-Cm4okMZt.js",
+    "name": "module.esm"
   },
   "src/js/landing.js": {
-    "file": "js/landing-BRCuaf5J.js",
+    "file": "js/landing-ClalYw8z.js",
     "name": "landing",
     "src": "src/js/landing.js",
     "isEntry": true,
     "imports": [
-      "_module.esm-DWwwSYNZ.js"
+      "_module.esm-Cm4okMZt.js"
+    ],
+    "css": [
+      "css/main-CUUXm0-U.css"
+    ]
+  },
+  "src/js/number-sequence.js": {
+    "file": "js/number-sequence-DmE7JCgG.js",
+    "name": "number-sequence",
+    "src": "src/js/number-sequence.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-Cm4okMZt.js"
     ]
   },
   "src/js/word-ladder.js": {
-    "file": "js/word-ladder-LMwHm1nT.js",
+    "file": "js/word-ladder-CTdrnSAz.js",
     "name": "word-ladder",
     "src": "src/js/word-ladder.js",
     "isEntry": true,
     "imports": [
-      "_module.esm-DWwwSYNZ.js"
+      "_module.esm-Cm4okMZt.js"
+    ],
+    "css": [
+      "css/main-CUUXm0-U.css"
     ]
   }
 }
