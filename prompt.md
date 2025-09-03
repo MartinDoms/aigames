@@ -12,8 +12,10 @@ not use React under any circumstances.
 If you need a database you can use psql to create and manage it. Please do not 
 mess with the existing guesshole database.
 
-You should make small changes and commit and push with each change. You should
-write tests (unit and integration) but don't go overboard - do enough to ensure
+You should make small changes and commit and push with each change.
+You should be committing and pushing to master often so I can review your progress.
+
+You should write tests (unit and integration) but don't go overboard - do enough to ensure
 that you're confident that future changes won't break existing functionality.
 
 Use notepad.md to keep a working notepad of what you're working on, what you

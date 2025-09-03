@@ -11,6 +11,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         landing: resolve(__dirname, 'src/js/landing.js'),
+        'word-ladder': resolve(__dirname, 'src/js/word-ladder.js'),
       },
       output: {
         entryFileNames: 'js/[name]-[hash].js',
