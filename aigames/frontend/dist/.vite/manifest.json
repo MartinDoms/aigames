@@ -1,14 +1,23 @@
 {
-  "_main-!~{004}~.js": {
-    "file": "css/main-CUUXm0-U.css",
-    "src": "_main-!~{004}~.js"
+  "_main-!~{005}~.js": {
+    "file": "css/main-BX5cIDWE.css",
+    "src": "_main-!~{005}~.js"
   },
   "_module.esm-Cm4okMZt.js": {
     "file": "js/module.esm-Cm4okMZt.js",
     "name": "module.esm"
   },
+  "src/js/geography-quiz.js": {
+    "file": "js/geography-quiz-nY_Xh1DO.js",
+    "name": "geography-quiz",
+    "src": "src/js/geography-quiz.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-Cm4okMZt.js"
+    ]
+  },
   "src/js/landing.js": {
-    "file": "js/landing-ClalYw8z.js",
+    "file": "js/landing-DJwZjirh.js",
     "name": "landing",
     "src": "src/js/landing.js",
     "isEntry": true,
@@ -16,7 +25,7 @@
       "_module.esm-Cm4okMZt.js"
     ],
     "css": [
-      "css/main-CUUXm0-U.css"
+      "css/main-BX5cIDWE.css"
     ]
   },
   "src/js/number-sequence.js": {
@@ -29,7 +38,7 @@
     ]
   },
   "src/js/word-ladder.js": {
-    "file": "js/word-ladder-CTdrnSAz.js",
+    "file": "js/word-ladder-CfEE3SZ7.js",
     "name": "word-ladder",
     "src": "src/js/word-ladder.js",
     "isEntry": true,
@@ -37,7 +46,7 @@
       "_module.esm-Cm4okMZt.js"
     ],
     "css": [
-      "css/main-CUUXm0-U.css"
+      "css/main-BX5cIDWE.css"
     ]
   }
 }

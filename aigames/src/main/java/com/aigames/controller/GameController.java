@@ -15,6 +15,7 @@ public class GameController {
         return switch (gameName) {
             case "word-ladder" -> Mono.just("games/word-ladder");
             case "number-sequence" -> Mono.just("games/number-sequence");
+            case "geography-quiz" -> Mono.just("games/geography-quiz");
             default -> Mono.just("redirect:/");
         };
     }

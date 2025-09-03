@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography Quiz - AI Games</title>
+    
+    <!-- Vite generated CSS -->
+    <link rel="stylesheet" th:href="@{/css/main-BX5cIDWE.css}" href="/css/main-BX5cIDWE.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div x-data="geographyQuiz" class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <div class="flex items-center justify-center mb-4">
+                <a href="/" class="mr-4 text-blue-600 hover:text-blue-800 transition-colors">
+                    ← Back to Games
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800">🌍 Geography Quiz</h1>
+            </div>
+            <p class="text-gray-600">Test your knowledge of world geography</p>
+        </header>
+
+        <!-- Loading State -->
+        <div x-show="loading" class="text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading question...</p>
+        </div>
+
+        <!-- Game Area -->
+        <div x-show="!loading && currentQuestion" class="max-w-2xl mx-auto">
+            <!-- Question -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="text-center mb-6">
+                    <div class="text-sm text-blue-600 mb-2" x-text="'Question ' + currentQuestionNumber"></div>
+                    <h2 class="text-xl font-semibold text-gray-800" x-text="currentQuestion.question"></h2>
+                </div>
+
+                <!-- Options -->
+                <div class="grid gap-3">
+                    <template x-for="(option, index) in currentQuestion.options" :key="index">
+                        <button 
+                            @click="selectAnswer(option)"
+                            :class="getOptionButtonClass(option)"
+                            :disabled="answered"
+                            class="w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            x-text="option">
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div x-show="answered" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="text-center">
+                    <div :class="isCorrect ? 'text-green-600' : 'text-red-600'" class="text-lg font-semibold mb-2" x-text="feedbackMessage"></div>
+                    <div class="text-gray-600 mb-4" x-text="currentQuestion.explanation"></div>
+                    <button @click="nextQuestion" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Next Question
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center text-sm text-gray-600">
+                    <div>Score: <span class="font-semibold text-gray-800" x-text="score + '/' + totalQuestions"></span></div>
+                    <div>Streak: <span class="font-semibold text-gray-800" x-text="streak"></span></div>
+                    <div>Best: <span class="font-semibold text-gray-800" x-text="bestScore"></span></div>
+                </div>
+            </div>
+
+            <!-- Question Type Filter -->
+            <div class="mt-6 text-center">
+                <div class="text-sm text-gray-600 mb-3">Question Type:</div>
+                <div class="flex justify-center gap-2 flex-wrap">
+                    <button @click="setQuestionType('random')" 
+                        :class="questionType === 'random' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
+                        class="px-4 py-2 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition-colors">
+                        Random
+                    </button>
+                    <button @click="setQuestionType('capital')" 
+                        :class="questionType === 'capital' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
+                        class="px-4 py-2 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition-colors">
+                        Capitals
+                    </button>
+                    <button @click="setQuestionType('country')" 
+                        :class="questionType === 'country' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
+                        class="px-4 py-2 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition-colors">
+                        Countries
+                    </button>
+                    <button @click="setQuestionType('fact')" 
+                        :class="questionType === 'fact' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'"
+                        class="px-4 py-2 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition-colors">
+                        Facts
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="max-w-2xl mx-auto mt-8 bg-blue-50 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2">How to Play</h3>
+            <ul class="text-blue-700 space-y-2 text-sm">
+                <li>• Answer geography questions about countries, capitals, and fun facts</li>
+                <li>• Choose from multiple choice answers</li>
+                <li>• Build your streak by answering correctly</li>
+                <li>• Switch between different question types or keep it random</li>
+                <li>• Your progress is saved automatically</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Vite generated JS -->
+    <script type="module" th:src="@{/js/geography-quiz-nY_Xh1DO.js}" src="/js/geography-quiz-nY_Xh1DO.js"></script>
+</body>
+</html>
