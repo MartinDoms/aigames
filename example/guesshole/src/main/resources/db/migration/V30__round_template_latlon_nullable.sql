@@ -1,0 +1,3 @@
+ALTER TABLE round_template
+ALTER COLUMN latitude DROP NOT NULL,
+ALTER COLUMN longitude DROP NOT NULL;

@@ -1,0 +1,19 @@
+<div th:fragment="share-section">
+    <h3 class="text-lg font-bold mb-2 text-primary flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+        </svg>
+        Invite Players
+    </h3>
+    <p class="mb-3 text-primary-light">Share this link with friends to invite them to your game:</p>
+    <button
+            id="copyLinkBtn"
+            @click="copyLinkToClipboard()"
+            class="bg-primary-dark hover:bg-secondary-dark text-white py-2 px-4 rounded-md transition-colors duration-200 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+            <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+        </svg>
+        Copy Invite Link
+    </button>
+</div>

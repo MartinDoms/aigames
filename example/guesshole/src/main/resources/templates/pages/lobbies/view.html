@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(jsRoot='lobby')}"></head>
+
+<body class="font-sans mx-auto bg-neutral-light text-primary"
+      th:data-lobby-id="${id}"
+      th:data-lobby-short-code="${shortCode}"
+      x-data="lobbyManager()"
+      x-init="initLobby">
+
+<div>
+    <nav th:replace="~{fragments/nav :: nav}"></nav>
+    <div class="bg-primary text-neutral rounded-lg m-1 p-1 lg:m-4 lg:m-4 shadow-md"
+         x-cloak
+         x-show="gameState && gameState.lobbyState === 'LOBBY'">
+        <div th:replace="~{fragments/lobby/lobby-header :: lobby-header}"></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-1 lg:p-4 m-1 lg:m-4 border-l-4 border-accent"
+         x-cloak
+         x-show="gameState && gameState.lobbyState === 'LOBBY'">
+        <div x-data="gameSettings">
+            <div th:replace="~{fragments/lobby/game-settings :: game-settings}">
+            </div>
+        </div>
+    </div>
+
+    <!-- The main game element -->
+    <div
+        x-cloak
+        x-show="gameState.lobbyState === 'GAME_IN_PROGRESS' || gameState.lobbyState === 'ROUND_SCOREBOARD'"
+        x-transition:enter="transition-all duration-500 ease-in-out"
+        x-transition:leave="transition-all duration-500 ease-in-out"
+        x-transition:enter-start="opacity-0 max-h-0 overflow-hidden"
+        x-transition:enter-end="opacity-100 max-h-screen"
+        class="mb-2 lg:mb-4 lg:p-4">
+        <div class="rounded-lg h-full border-2 border-neutral bg-white lg:p-4 shadow-md">
+            <div th:replace="~{fragments/lobby/game-panel :: game-panel}"></div>
+        </div>
+    </div>
+
+    <div class="bg-white p-2 lg:p-4 mb-2 lg:m-4 rounded-lg shadow-md border-l-4 border-secondary" id="playerForm">
+        <div th:replace="~{fragments/lobby/player-profile :: player-profile}"></div>
+    </div>
+
+    <div x-cloak
+         x-data="playerList"
+         class="bg-white rounded-lg shadow-md mb-2 lg:mb-4 p-2 lg:p-4 lg:m-4 border-l-4 border-accent">
+        <div th:replace="~{fragments/lobby/players-list :: players-list}"></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-2  lg:p-4 mb-2 lg:m-4 border-l-4 border-secondary">
+        <div th:replace="~{fragments/lobby/share-section :: share-section}"></div>
+    </div>
+
+    <div class="bg-primary rounded-lg shadow-md p-1 lg:p-4 lg:m-4 mb-5">
+        <div th:replace="~{fragments/connection-log :: connection-log}"></div>
+    </div>
+
+    <!-- Initial Setup Modal -->
+    <div th:replace="~{fragments/lobby/initial-setup-modal :: initial-setup-modal}"></div>
+
+    <!-- Avatar Picker Modal -->
+    <div
+        x-data="avatarPicker"
+        x-show="avatarPicker.showAvatarPicker"
+        x-cloak
+        class="fixed inset-0 bg-primary bg-opacity-75 flex items-center justify-center z-50 overflow-hidden"
+        @click.self="cancelAvatarSelection()">
+
+        <div th:replace="~{fragments/lobby/avatar-picker :: avatar-picker}"></div>
+    </div>
+
+    <div x-data="notification">
+        <div th:replace="~{fragments/notification :: notification}"></div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

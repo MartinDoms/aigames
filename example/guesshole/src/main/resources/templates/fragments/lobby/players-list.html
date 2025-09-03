@@ -1,0 +1,81 @@
+<div th:fragment="players-list">
+    <h3 class="text-lg font-bold mb-3 text-primary flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+        </svg>
+        Players
+    </h3>
+    <ul id="playersList" class="list-none p-0 space-y-2">
+        <template x-if="!players.length">
+            <li class="py-3 px-4 bg-neutral rounded-lg flex justify-between" x-text="message"></li>
+        </template>
+        <template x-for="player in players" :key="player.id">
+            <li class="player-card relative p-3 bg-white rounded-lg shadow-md mb-3"
+                :class="{'animate-highlight': false}"
+                :data-player-id="player.id">
+                <!-- Avatar with nested status indicator -->
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <img :src="`/images/avatars/${player.avatar}.webp`" class="w-12 h-12 rounded-full">
+                        <!-- Status indicator dot -->
+                        <span class="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white"
+                              :class="player.active ? 'bg-green-500' : 'bg-gray-400'"></span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold" x-text="player.name"></h3>
+                        <p class="text-sm text-gray-500" x-text="player.active ? 'Online' : 'Offline'"></p>
+                    </div>
+
+                    <!-- Host controls or host label -->
+                    <div class="flex items-center">
+                        <!-- For host, show controls depending on the current state -->
+                        <template x-if="player.host">
+                            <div>
+                                <button
+                                        x-show="player.id === currentPlayerId && gameState.lobbyState === 'GAME_IN_PROGRESS'"
+                                        @click="returnToLobby()"
+                                        class="px-3 py-1 bg-accent hover:bg-accent-dark text-primary text-sm font-medium rounded-full transition-colors duration-300">
+                                    Return to lobby
+                                </button>
+
+                                <!-- For other players, show the HOST label -->
+                                <span
+                                        x-show="player.id !== currentPlayerId"
+                                        class="px-2 py-1 bg-secondary-light text-primary text-xs font-medium rounded-full">
+                                    HOST
+                                </span>
+                            </div>
+                        </template>
+
+                        <!-- Show kebab menu for non-self players when current player is host -->
+                        <div x-show="isHost && player.id !== currentPlayerId" class="relative ml-2">
+                            <button
+                                    @click="player.showMenu = !player.showMenu"
+                                    class="p-1 rounded-full hover:bg-neutral focus:outline-none"
+                                    aria-label="Player options">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                                </svg>
+                            </button>
+
+                            <!-- Dropdown menu -->
+                            <div
+                                    x-show="player.showMenu"
+                                    @click.away="player.showMenu = false"
+                                    class="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg z-50 border border-neutral-light"
+                                    x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter-end="transform opacity-100 scale-100">
+                                <button
+                                        @click="kickPlayer(player.id); player.showMenu = false"
+                                        class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-neutral-light focus:outline-none">
+                                    Kick player
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </template>
+    </ul>
+</div>

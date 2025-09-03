@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('landing')}"></head>
+
+<body class="bg-neutral min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<!-- Error Content -->
+<div class="flex-grow flex items-center justify-center">
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-2xl mx-auto bg-neutral-light rounded-xl shadow-lg p-8 text-center">
+            <div class="mb-6">
+                <div class="bg-primary-light inline-block p-4 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-accent" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="text-3xl font-bold text-primary mb-4" th:text="${status} + ' - ' + ${error}">404 - Not Found</h1>
+
+            <p class="text-lg text-primary-dark mb-8" th:text="${message}">
+                Sorry, the page you're looking for can't be found.
+            </p>
+
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-primary mb-4">Technical Details</h2>
+                <div class="bg-primary bg-opacity-5 p-4 rounded-lg text-left mb-4">
+                    <p class="font-mono text-sm text-neutral" th:if="${timestamp}" th:text="'Time: ' + ${timestamp}">Time: 2025-03-05 14:30:00</p>
+                    <p class="font-mono text-sm text-neutral" th:if="${path}" th:text="'Path: ' + ${path}">Path: /unknown/page</p>
+                    <p class="font-mono text-sm text-neutral" th:if="${exception}" th:text="'Exception: ' + ${exception}">Exception: NullPointerException</p>
+                    <p class="font-mono text-sm text-neutral" th:if="${trace}" th:text="'Trace: ' + ${trace}">Trace: detailed stack trace</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/" class="px-6 py-3 bg-primary text-neutral font-semibold rounded-lg shadow transition transform hover:scale-105">
+                    Return to Homepage
+                </a>
+                <a href="/contact" class="px-6 py-3 bg-accent text-primary-dark font-semibold rounded-lg shadow transition transform hover:scale-105">
+                    Contact Support
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

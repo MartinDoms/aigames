@@ -1,0 +1,60 @@
+<head th:fragment="head (jsRoot)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guesshole - A Competitive Geography Guessing Game</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Test your geography knowledge in this competitive party-style guessing game. Race against the clock, challenge friends, and see who can pinpoint locations with the highest accuracy.">
+    <meta name="keywords" content="geography game, map game, guessing game, geography quiz, multiplayer game, party game">
+    <meta name="author" content="Guesshole">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://guesshole.com/">
+    <meta property="og:title" content="Guesshole - Test Your Geography Knowledge!">
+    <meta property="og:description" content="Challenge your friends in this competitive party-style geography guessing game. Race against the clock and test your global knowledge.">
+    <meta property="og:image" content="/images/guesshole-preview.jpg">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Guesshole - A Competitive Geography Guessing Game">
+    <meta name="twitter:description" content="Challenge your friends in this competitive party-style geography guessing game. Race against the clock and test your global knowledge.">
+    <meta name="twitter:image" content="/images/guesshole-preview.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" th:href="${#asset.path(jsRoot + '-css')}">
+
+    <!-- Leaflet for maps -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+    <!-- Main JS Module -->
+    <script type="module" th:src="${#asset.path(jsRoot)}"></script>
+
+    <!-- Structured Data for Rich Results -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Guesshole",
+            "description": "A competitive geography guessing game where players test their knowledge by pinpointing locations around the world.",
+            "url": "https://guesshole.com",
+            "applicationCategory": "GameApplication",
+            "genre": "Geography",
+            "operatingSystem": "Web",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            }
+        }
+    </script>
+</head>

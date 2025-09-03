@@ -1,0 +1,136 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.flywaydb:flyway-database-postgresql:10.20.1'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.2'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.flywaydb.flyway' version '11.3.3'
+	id 'com.github.node-gradle.node' version '7.0.2' // Add this new plugin
+}
+
+flyway {
+	url = 'jdbc:postgresql://127.0.0.1:5432/guessholedb'
+	user = 'guessholedbuser'
+	password = 'guesshole'
+	driver = 'org.postgresql.Driver'
+}
+
+group = 'com.guesshole'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+Properties appProps = new Properties()
+file("src/main/resources/application.properties").withInputStream { props ->
+	appProps.load(props)
+}
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// Spring Security dependencies
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-config'
+	implementation 'org.springframework.security:spring-security-web'
+
+	// For testing security
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	implementation 'org.postgresql:postgresql'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-database-postgresql:10.20.1'
+
+	implementation 'io.rsocket:rsocket-core:1.1.0'
+	implementation 'io.rsocket:rsocket-transport-netty:1.1.0'
+
+	implementation 'org.postgresql:r2dbc-postgresql'
+	runtimeOnly 'org.postgresql:postgresql'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'commons-codec:commons-codec:1.15'
+
+	implementation 'io.micrometer:micrometer-core'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.projectreactor.netty:reactor-netty-core'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// Node.js configuration
+node {
+	version = '22.14.0'
+	npmVersion = '10.9.2'
+	download = true
+	workDir = file("${project.buildDir}/nodejs")
+	npmWorkDir = file("${project.buildDir}/npm")
+}
+
+// Task to install frontend dependencies
+task installFrontendDeps(type: NpmTask) {
+	description = 'Install frontend dependencies'
+	args = ['install']
+	execOverrides {
+		it.workingDir = file("${project.projectDir}/frontend")
+	}
+}
+
+// Task to build the frontend
+task buildFrontend(type: NpmTask) {
+	description = 'Build the frontend with Vite'
+	args = ['run', 'build']
+	execOverrides {
+		it.workingDir = file("${project.projectDir}/frontend")
+	}
+	dependsOn installFrontendDeps
+}
+
+// Task to copy the built frontend to Spring Boot static resources
+task copyFrontendToStatic(type: Copy) {
+	description = 'Copy Vite build output to Spring Boot static resources'
+	from "${project.projectDir}/frontend/dist"
+	into "${project.buildDir}/resources/main/static"
+	dependsOn buildFrontend
+}
+
+// Make sure your Spring Boot build includes the frontend assets
+processResources {
+	dependsOn copyFrontendToStatic
+}
+
+// For development, you can add a task to start the Vite dev server
+task startFrontendDevServer(type: NpmTask) {
+	description = 'Start Vite dev server'
+	args = ['run', 'dev']
+	execOverrides {
+		it.workingDir = file("${project.projectDir}/frontend")
+	}
+	dependsOn installFrontendDeps
+}

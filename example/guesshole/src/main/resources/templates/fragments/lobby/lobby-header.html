@@ -1,0 +1,9 @@
+<div th:fragment="lobby-header">
+    <div class="flex justify-between items-center">
+        <span class="text-xl font-bold" th:text="${lobby.name}">Lobby Name</span>
+        <div class="text-right">
+            <span class="text-xl font-bold">Lobby Code:</span>
+            <span class="ml-2 text-2xl font-bold tracking-widest" x-text="playerState.lobbyShortCode"></span>
+        </div>
+    </div>
+</div>

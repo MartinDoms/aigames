@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(jsRoot='admin-map')}">
+    <!-- Head content will be replaced by the fragment -->
+    <!-- Add Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+</head>
+
+<body class="bg-neutral min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<div class="flex-grow flex flex-col w-full h-1/2">
+    <div class="w-full flex-grow"
+         x-data="roundTemplateMap()"
+         x-init="initMap()">
+        <!-- Header -->
+        <div class="mb-4 px-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-primary">Round Template Map</h1>
+                    <p class="text-primary-dark">View all round templates on the world map</p>
+                </div>
+                <div class="flex space-x-4 items-center">
+                    <p class="text-primary-dark" x-text="'Total Templates: ' + markerCount"></p>
+                    <button @click="refreshTemplates()" class="px-4 py-2 bg-secondary hover:bg-secondary-dark text-primary-dark rounded transition-colors">
+                        Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div x-show="loading" class="absolute inset-0 bg-neutral bg-opacity-70 flex justify-center items-center z-50">
+            <div class="bg-neutral-light p-6 rounded-lg shadow-lg flex items-center">
+                <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="ml-3 text-primary-dark font-medium">Loading templates...</span>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-4 bg-neutral-light p-4 rounded-lg border border-neutral-dark mx-4">
+            <div class="flex flex-wrap gap-3 items-center">
+                <h2 class="text-lg font-medium text-primary mr-4">Filters</h2>
+
+                <div>
+                    <span class="text-primary-dark">Source:</span>
+                    <select x-model="selectedSource" @change="filterMarkers()" class="ml-2 bg-neutral border border-neutral-dark rounded px-2 py-1">
+                        <option value="all">All Sources</option>
+                        <template x-for="source in sources" :key="source">
+                            <option :value="source" x-text="source"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <div>
+                    <span class="text-primary-dark">Status:</span>
+                    <select x-model="selectedStatus" @change="filterMarkers()" class="ml-2 bg-neutral border border-neutral-dark rounded px-2 py-1">
+                        <option value="all">All Status</option>
+                        <option value="approved">Approved</option>
+                        <option value="pending">Pending Approval</option>
+                    </select>
+                </div>
+
+                <div>
+                    <span class="text-primary-dark">Clustering:</span>
+                    <select x-model="clusteringOptions.enabled" @change="updateClustering()" class="ml-2 bg-neutral border border-neutral-dark rounded px-2 py-1">
+                        <option :value="true">Enabled</option>
+                        <option :value="false">Disabled</option>
+                    </select>
+                </div>
+
+                <div x-show="clusteringOptions.enabled">
+                    <span class="text-primary-dark">Cluster Radius:</span>
+                    <input type="range" x-model.number="clusteringOptions.radius" min="40" max="200" step="10"
+                           @change="updateClustering()" class="ml-2 w-24">
+                    <span x-text="clusteringOptions.radius + 'px'" class="text-xs text-primary-dark ml-1"></span>
+                </div>
+
+                <div class="ml-auto">
+                    <button @click="resetFilters()" class="px-3 py-1 bg-primary text-neutral rounded hover:bg-primary-light transition-colors">
+                        Reset Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="flex-grow relative w-full h-[50vh]">
+            <div id="map" class="absolute inset-0 w-full"></div>
+        </div>
+
+        <!-- Selected Template Info -->
+        <div x-show="selectedTemplate" x-transition
+             class="mt-4 bg-neutral-light p-4 rounded-lg border border-neutral-dark mx-4">
+            <div class="flex justify-between items-start">
+                <h2 class="text-lg font-medium text-primary">Selected Template Details</h2>
+                <button @click="selectedTemplate = null" class="text-primary-dark hover:text-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                <div>
+                    <div class="grid grid-cols-2 gap-y-2 text-sm">
+                        <div class="text-primary-dark">ID:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate?.id"></div>
+
+                        <div class="text-primary-dark">Source:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate?.source"></div>
+
+                        <div class="text-primary-dark">YouTube ID:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate?.youtubeVideoId"></div>
+
+                        <div class="text-primary-dark">Start Time:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate ? formatTime(selectedTemplate.startTime) : ''"></div>
+
+                        <div class="text-primary-dark">Duration:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate?.videoLength ? formatTime(selectedTemplate.videoLength) : 'Unknown'"></div>
+
+                        <div class="text-primary-dark">Coordinates:</div>
+                        <div class="text-primary font-medium">
+                            <span x-text="selectedTemplate?.latitude"></span>, <span x-text="selectedTemplate?.longitude"></span>
+                        </div>
+
+                        <div class="text-primary-dark">Status:</div>
+                        <div class="text-primary font-medium">
+                            <span x-show="selectedTemplate?.approveAt" class="text-green-600">Approved <span x-text="selectedTemplate ? formatDate(selectedTemplate.approveAt) : ''"></span></span>
+                            <span x-show="selectedTemplate && !selectedTemplate.approveAt" class="text-yellow-600">Pending Approval</span>
+                        </div>
+
+                        <div class="text-primary-dark">Created:</div>
+                        <div class="text-primary font-medium" x-text="selectedTemplate ? formatDate(selectedTemplate.createdAt) : ''"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="relative w-full h-36 bg-neutral-dark rounded overflow-hidden">
+                        <div
+                                class="absolute inset-0 w-full h-full object-cover"
+                                id="ytplayer">
+                        </div>
+                    </div>
+                    <div class="mt-2 flex justify-center">
+                        <a :href="selectedTemplate ? 'https://www.youtube.com/watch?v=' + selectedTemplate.youtubeVideoId + '&t=' + selectedTemplate.startTime : '#'"
+                           target="_blank"
+                           class="px-3 py-1 bg-secondary hover:bg-secondary-dark text-primary-dark rounded transition-colors text-sm">
+                            Open in YouTube
+                        </a>
+                        <a :href="selectedTemplate ? '/admin/videos?filter=all&videoId=' + selectedTemplate.youtubeVideoId : '#'"
+                           class="ml-2 px-3 py-1 bg-accent hover:bg-accent-dark text-primary-dark rounded transition-colors text-sm">
+                            Manage Video
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

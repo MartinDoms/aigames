@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: guesshole-app
+    restart: always
+    ports:
+      - "8088:8088"
+      - "8081:8081"
+    depends_on:
+      - db
+    environment:
+      # R2DBC Configuration
+      - SPRING_R2DBC_URL=r2dbc:postgresql://db:5432/guessholedb
+      - SPRING_R2DBC_USERNAME=guessholedbuser
+      - SPRING_R2DBC_PASSWORD=guesshole
+      # Flyway Configuration
+      - SPRING_FLYWAY_URL=jdbc:postgresql://db:5432/guessholedb
+      - SPRING_FLYWAY_USER=guessholedbuser
+      - SPRING_FLYWAY_PASSWORD=guesshole
+      # WebFlux-specific settings
+      - SPRING_MAIN_WEB-APPLICATION-TYPE=reactive
+      - SERVER_PORT=8088
+      # App websocket timeouts
+      - APP_PLAYER_DISCONNECTED-TIMEOUT-SECONDS=5
+      - APP_PLAYER_INACTIVE-TIMEOUT-MINUTES=5
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 3G
+
+  db:
+    image: postgis/postgis:15-3.3
+    container_name: guesshole-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=guessholedb
+      - POSTGRES_USER=guessholedbuser
+      - POSTGRES_PASSWORD=guesshole
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  nginx:
+    image: nginx:latest
+    container_name: guesshole-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+      - prometheus-storage:/prometheus
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+volumes:
+  postgres-data:
+  grafana-storage:
+  prometheus-storage:

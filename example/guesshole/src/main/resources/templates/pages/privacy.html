@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head :: head('landing')}"></head>
+
+<body class="bg-neutral min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<!-- Privacy Policy Content -->
+<div class="flex-grow">
+    <div class="container mx-auto px-4 py-12">
+        <div class="bg-neutral-light rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold text-primary mb-6">Privacy Policy</h1>
+
+            <div class="prose prose-lg text-primary-dark">
+                <p class="mb-4">Last Updated: March 5, 2025</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">1. Introduction</h2>
+                <p class="mb-4">Welcome to Guesshole. We respect your privacy and are committed to protecting any information that may be collected through your use of our Service. This Privacy Policy explains our practices regarding data collection and usage.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">2. Information Collection</h2>
+                <p class="mb-4">Guesshole does not collect or store personal user data. We do not require you to create an account or provide personal information to use our Service.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">3. Technical Information and Telemetry</h2>
+                <p class="mb-4">We collect limited technical information and telemetry data solely for the purpose of monitoring system performance, diagnosing technical issues, and improving the Service. This information may include:</p>
+                <ul class="list-disc pl-6 mb-4 space-y-2">
+                    <li>Browser type and version</li>
+                    <li>Operating system</li>
+                    <li>Device type</li>
+                    <li>Connection information</li>
+                    <li>Game session metrics (duration, number of players, etc.)</li>
+                    <li>System errors or crashes</li>
+                </ul>
+                <p class="mb-4">This telemetry data is anonymized and cannot be used to identify individual users. We use this information exclusively to maintain and improve the functionality of Guesshole.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">4. Cookies and Similar Technologies</h2>
+                <p class="mb-4">Guesshole may use cookies or similar technologies to enhance your experience with our Service. These are used primarily for technical purposes such as maintaining session information or remembering your preferences. You can configure your browser to refuse cookies, but this may limit your ability to use certain features of the Service.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">5. Third-Party Services</h2>
+                <p class="mb-4">Our Service may include links to third-party websites or services. We are not responsible for the privacy practices of these third parties. We encourage you to read the privacy policies of any third-party services you access through our Service.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">6. Data Security</h2>
+                <p class="mb-4">We implement reasonable security measures to protect any technical information collected through our Service. However, no method of transmission over the Internet or electronic storage is 100% secure, and we cannot guarantee absolute security.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">7. Children's Privacy</h2>
+                <p class="mb-4">Our Service is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">8. Changes to This Privacy Policy</h2>
+                <p class="mb-4">We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p>
+
+                <h2 class="text-xl font-semibold text-primary mt-8 mb-4">9. Contact Us</h2>
+                <p class="mb-4">If you have any questions about this Privacy Policy, please contact us through our <a href="/contact" class="text-accent hover:text-accent-dark">Contact page</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "name": "Guesshole",
+  "short_name": "Guesshole",
+  "theme_color": "#333652",
+  "background_color": "#a5bfd4",
+  "display": "standalone"
+}

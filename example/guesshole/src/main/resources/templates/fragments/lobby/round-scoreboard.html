@@ -1,0 +1,326 @@
+<div th:fragment="round-scoreboard" class="h-full overflow-auto">
+    <div id="scoreboard-container" class="bg-neutral-light lg:mr-4 rounded-xl shadow-md p-1 lg:p-4 relative overflow-auto h-full">
+
+        <!-- Scoreboard Header -->
+        <div class="text-center mb-2 md:mb-6">
+            <div x-show="gameState.totalRounds > 1" class="inline-block text-primary px-6 py-1 md:py-2 rounded-full font-bold shadow-md mb-2 md:mb-4">
+                Round <span x-text="currentRoundScoreboard?.roundNumber || '?'"></span> of <span x-text="gameState.totalRounds || '?'"></span>
+            </div>
+            <!-- Conditional title based on game state -->
+            <h1 class="text-4xl text-primary-dark font-extrabold text-transparent bg-clip-text mb-2"
+                x-text="isLastRound() ? 'Game complete!' : 'Round complete!'"></h1>
+
+            <!-- Winner Banner (only shown at game end) -->
+            <div x-show="isLastRound()" class="mt-4 bg-accent/20 rounded-xl p-4 shadow-lg text-center">
+                <template x-for="(score, index) in getPlayerScoresSortedByTotalScore() || []" :key="score.player.id">
+                    <div x-show="index === 0" class="animate-bounce-slow">
+                        <h2 x-show="!currentRoundScoreboard?.isSoloGame" class="text-3xl font-bold text-primary-dark mb-2">
+                            <span>Winner: </span>
+                            <span x-text="score.player.id === playerState.currentPlayerId ? 'You!' : score.player.name"></span>
+                        </h2>
+
+                        <div x-show="currentRoundScoreboard?.isSoloGame && currentRoundScoreboard?.isNewHighScore"
+                             id="high-score-container"
+                        >
+                            <div class="inline-block bg-gradient-to-br from-yellow-300 to-yellow-500 text-primary-dark px-3 py-1 rounded-full font-bold shadow-lg border-2 border-yellow-200 animate-bounce">
+                                <div class="flex items-center whitespace-nowrap">
+                                    <span class="text-lg">🏆</span>
+                                    <span class="ml-1">New personal best!</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center items-center">
+                            <img :src="'/images/avatars/' + score.player.avatar + '.webp'"
+                                 :alt="score.player.name + ' avatar'"
+                                 class="w-20 h-20 rounded-full border-4 border-yellow-400 shadow-md">
+                            <div class="ml-4 text-accent-dark text-4xl font-extrabold">
+                                <span x-text="score.totalScore.toLocaleString()"></span> points
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Final leaderboard (only visible at the end of the game) -->
+        <div cloak x-show="!currentRoundScoreboard?.isSoloGame && isLastRound()" class="bg-secondary-light text-primary-dark rounded-xl p-1 lg:p-4 mb-6 shadow-md">
+            <h3 class="text-xl font-bold text-primary-dark mb-4">Final leaderboard</h3>
+
+            <!-- Medal podium for top 3 (only for game end) -->
+            <div class="flex justify-center mb-6 space-x-4">
+                <template x-for="(score, index) in getPlayerScoresSortedByTotalScore() || []" :key="score.player.id">
+                    <div x-show="index < 3"
+                         :class="{
+                            'order-2 scale-125 z-10': index === 0,
+                            'order-1': index === 1,
+                            'order-3': index === 2
+                        }"
+                         class="text-center transition-all duration-300">
+                        <div :class="{
+                            'border-yellow-400 bg-yellow-100': index === 0,
+                            'border-gray-300 bg-gray-100': index === 1,
+                            'border-yellow-700 bg-yellow-50': index === 2
+                        }" class="w-16 h-16 md:w-20 md:h-20 rounded-full border-4 mx-auto mb-2 flex items-center justify-center">
+                            <img :src="'/images/avatars/' + score.player.avatar + '.webp'"
+                                 :alt="score.player.name"
+                                 class="w-12 h-12 md:w-16 md:h-16 rounded-full">
+                        </div>
+                        <div :class="{
+                            'text-yellow-400': index === 0,
+                            'text-gray-400': index === 1,
+                            'text-yellow-700': index === 2
+                        }" class="text-2xl font-bold">
+                            <span x-text="index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'"></span>
+                        </div>
+                        <p class="font-bold text-primary-dark" x-text="score.player.name"></p>
+                        <p class="text-accent" x-text="score.totalScore.toLocaleString()"></p>
+                    </div>
+                </template>
+            </div>
+
+            <ul class="space-y-2">
+                <template x-for="(score, index) in getPlayerScoresSortedByTotalScore() || []" :key="score.player.id">
+                    <li :class="{'bg-secondary-dark': score.player.id === playerState.currentPlayerId, 'bg-secondary-light': score.player.id !== playerState.currentPlayerId}"
+                        class="flex items-center rounded-lg p-3 hover:scale-[1.01] transition-transform duration-200"
+                        x-show="!isLastRound() || !index < 3 || currentRoundScoreboard?.isSoloGame">
+                        <div :class="{
+                            'bg-yellow-400 text-gray-900': index === 0,
+                            'bg-gray-300 text-gray-900': index === 1,
+                            'bg-yellow-700 text-gray-900': index === 2,
+                            'bg-primary-dark text-secondary-light': index > 2
+                        }" class="w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 shadow-md">
+                            <span x-text="index + 1"></span>
+                        </div>
+                        <div class="flex items-center flex-1">
+                            <img :src="'/images/avatars/' + score.player.avatar + '.webp'"
+                                 :alt="score.player.name"
+                                 class="w-8 h-8 rounded-full border-2 border-primary-500 mr-3">
+                            <span class="font-bold text-primary-dark" x-text="score.player.name"></span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex mr-2">
+                                <template x-for="(multiplier, mIndex) in score.guess.scoreMultipliers || []" :key="mIndex">
+                                    <div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center mr-1 text-white relative group">
+                                        <div x-html="getMultiplierIcon(multiplier.type)" class="text-xs"></div>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
+                                            <span x-text="multiplier.tooltip"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <span class="font-bold text-accent">+</span>
+                            <span class="font-bold text-accent mr-4" x-text="score.guess.score.toLocaleString()"></span>
+                            <span class="font-bold text-primary" x-text="score.totalScore.toLocaleString()"></span>
+                        </div>
+                    </li>
+                </template>
+                <li x-show="!currentRoundScoreboard?.playerScores || currentRoundScoreboard.playerScores.length === 0"
+                    class="p-4 text-center text-gray-400 bg-gray-800/70 rounded-lg">
+                    No scores available for this round
+                </li>
+            </ul>
+        </div>
+
+        <!-- Player Stats -->
+        <template x-for="(score, index) in currentRoundScoreboard?.playerScores || []" :key="score.player.id">
+            <div x-show="gameState.totalRounds > 1 && score.player.id === playerState.currentPlayerId">
+                <div class="flex flex-col md:flex-row items-center justify-between rounded-xl p-2 md:p-4 mb-2 md:mb-6 shadow-lg">
+                    <div x-show="!currentRoundScoreboard?.isSoloGame" class="flex grow flex-row items-center text-center text-left mb-2 md:mb-0">
+                        <img :src="'/images/avatars/' + score.player.avatar + '.webp'"
+                             :alt="score.player.name + ' avatar'"
+                             class="w-16 md:w-20 h-16 md:h-20 rounded-full border-4 border-primary-500 shadow-md mb-1 md:mb-2 md:mb-0 mr-2 md:mr-6">
+                        <div>
+                            <h2 class="text-4xl font-bold text-primary-dark" x-text="score.player.name"></h2>
+                            <!-- Conditional rank display -->
+                            <p x-show="isLastRound()" class="text-accent-500">
+                                <span x-text="getFinalRank(score.player.id) === 1 ? '1st' : getFinalRank(score.player.id) === 2 ? '2nd' : getFinalRank(score.player.id) === 3 ? '3rd' : getFinalRank(score.player.id) + 'th'"></span>
+                                Place overall
+                            </p>
+                        </div>
+                    </div>
+                    <div class="grow mb-2 md:mb-4 text-center">
+                        <p class="uppercase text-sm" x-text="isLastRound() ? 'FINAL ROUND SCORE' : 'YOUR SCORE'"></p>
+                        <h3 class="text-accent-dark text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text" x-text="score.guess.score.toLocaleString()"></h3>
+                    </div>
+                </div>
+
+                <!-- Base Score -->
+                <div class="flex justify-center mb-1 md:mb-2 lg:mb-4">
+                    <div class="shadow-md inline-flex items-center rounded-lg px-8 py-3">
+                        <span class="text-primary font-bold mr-3">Base Score:</span>
+                        <span class="text-xl font-bold text-primary-dark" x-text="score.guess.baseScore? score.guess.baseScore.toLocaleString() + ' points' : '0 points'"></span>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Country state city path element -->
+        <div class="flex justify-center mb-2 lg:mb-4">
+            <div class="shadow-md inline-flex items-center rounded-lg px-1 lg:px-8 py-3 w-full">
+                <div class="grid grid-cols-[1fr_2fr_8px_2fr_8px_2fr] items-center w-full font-bold">
+
+                    <!-- Your guess row -->
+                    <div class="font-bold text-primary">Your guess:</div>
+                    <div x-text="getGuessAdminArea(0, playerState.currentPlayerId)"
+                         class="bg-secondary text-primary my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+                    <span class="text-primary-light">></span>
+                    <div x-text="getGuessAdminArea(1, playerState.currentPlayerId)"
+                         class="bg-secondary text-primary my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+                    <span class="text-primary-light">></span>
+                    <div x-text="getGuessAdminArea(2, playerState.currentPlayerId)"
+                         class="bg-secondary text-primary my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+
+                    <!-- Target row -->
+                    <div class="font-bold text-primary">Target:</div>
+                    <div x-text="getTargetAdminArea(0);"
+                         class="bg-primary-light text-neutral-light my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+                    <span class="text-primary-light">></span>
+                    <div x-text="getTargetAdminArea(1);"
+                         class="bg-primary-light text-neutral-light my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+                    <span class="text-primary-light">></span>
+                    <div x-text="getTargetAdminArea(2);"
+                         class="bg-primary-light text-neutral-light my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden"></div>
+
+                    <!-- Match row -->
+                    <div class="font-bold text-primary">Match:</div>
+                    <div x-bind:class="getDoesGuessMatchTargetAdminArea(0, playerState.currentPlayerId) ? 'bg-accent' : 'bg-neutral'"
+                         class="my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden text-primary">
+                        <span x-text="getTargetAdminAreaType(0)"></span>
+                        <span class="absolute right-1 lg:right-4 opacity-70 text-xl pointer-events-none"
+                              x-text="getDoesGuessMatchTargetAdminArea(0, playerState.currentPlayerId) ? '✔️' : '❌'"></span>
+                    </div>
+                    <span class="text-primary-light">></span>
+                    <div x-bind:class="getDoesGuessMatchTargetAdminArea(1, playerState.currentPlayerId) ? 'bg-accent' : 'bg-neutral'"
+                         class="my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden text-primary">
+                        <span x-text="getTargetAdminAreaType(1)"></span>
+                        <span class="absolute right-1 lg:right-4 opacity-70 text-xl pointer-events-none"
+                              x-text="getDoesGuessMatchTargetAdminArea(1, playerState.currentPlayerId)  ? '✔️' : '❌'"></span>
+                    </div>
+                    <span class="text-primary-light">></span>
+                    <div x-bind:class="getDoesGuessMatchTargetAdminArea(2, playerState.currentPlayerId) ? 'bg-accent' : 'bg-neutral'"
+                         class="my-1 min-h-14 py-2 px-2 lg:px-4 rounded-md relative flex items-center line-clamp-2 overflow-hidden text-primary">
+                        <span x-text="getTargetAdminAreaType(2)"></span>
+                        <span class="absolute right-1 lg:right-4 opacity-70 text-xl pointer-events-none"
+                              x-text="getDoesGuessMatchTargetAdminArea(2, playerState.currentPlayerId) ? '✔️' : '❌'"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multipliers -->
+        <div id="mult-container" class="bg-secondary-light shadow-md mb-4 rounded-xl p-2 lg:p-4 mb-6">
+            <div id="confetti-container" class="fixed inset-0 pointer-events-none z-50 overflow-hidden"></div>
+            <h3 class="text-xl font-bold text-primary-dark mb-4">Your Multipliers</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <template x-for="(score, playerIndex) in currentRoundScoreboard?.playerScores || []" :key="score.player.id">
+                    <template x-if="score.player.id === playerState.currentPlayerId">
+                        <template x-for="(multiplier, mIndex) in score.guess.scoreMultipliers || []" :key="mIndex">
+                            <div
+                                    cloak
+                                    x-show="shouldShowMult(multiplier)"
+                                    x-transition:enter.duration.500ms
+                                    x-transition:enter.scale.110
+                                    :id="`mult${mIndex}`"
+                                    class="bg-secondary-dark rounded-lg p-2 lg:p-4 flex items-center hover:-translate-y-1 transition-transform duration-300 shadow-md">
+                                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center mr-4 shadow-md">
+                                    <div x-html="getMultiplierIcon(multiplier.multiplierType)" class="text-secondary-dark"></div>
+                                </div>
+                                <div>
+                                    <h4 class="text-m text-primary-dark font-medium" x-text="multiplier.displayName || multiplier.type"></h4>
+                                    <p class="text-xl font-bold text-primary" x-text="multiplier.multiplierValue + 'x'"></p>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                </template>
+            </div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div x-show="!isLastRound()" class="bg-secondary-light text-primary-dark rounded-xl p-1 lg:p-4 mb-6 shadow-md">
+            <h3 x-show="!currentRoundScoreboard?.isSoloGame"  class="text-primary-dark text-xl font-bold mb-4">Overall Leaderboard</h3>
+            <ul class="space-y-2">
+                <template x-for="(score, index) in getPlayerScoresSortedByTotalScore() || []" :key="score.player.id">
+                    <li :class="{'bg-secondary-dark': score.player.id === playerState.currentPlayerId, 'bg-secondary-light': score.player.id !== playerState.currentPlayerId}"
+                        class="flex items-center rounded-lg p-3 hover:scale-[1.01] transition-transform duration-200">
+                        <div :class="{
+                            'bg-yellow-400 text-gray-900': index === 0,
+                            'bg-gray-300 text-gray-900': index === 1,
+                            'bg-yellow-700 text-gray-900': index === 2,
+                            'bg-primary-dark text-secondary-light': index > 2
+                        }" class="w-8 h-8 rounded-full flex items-center justify-center font-bold mr-4 shadow-md">
+                            <span x-text="index + 1"></span>
+                        </div>
+                        <div class="flex items-center flex-1">
+                            <img :src="'/images/avatars/' + score.player.avatar + '.webp'"
+                                 :alt="score.player.name"
+                                 class="w-8 h-8 rounded-full border-2 border-primary-500 mr-3">
+                            <span class="font-bold text-primary-dark" x-text="score.player.name"></span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex mr-2">
+                                <template x-for="(multiplier, mIndex) in score.guess.scoreMultipliers || []" :key="mIndex">
+                                    <div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center mr-1 text-white relative group">
+                                        <div x-html="getMultiplierIcon(multiplier.type)" class="text-xs"></div>
+                                        <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs py-1 px-2 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 shadow-lg">
+                                            <span x-text="multiplier.tooltip"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <span class="font-bold text-accent">+</span>
+                            <span class="font-bold text-accent mr-4" x-text="score.guess.score.toLocaleString()"></span>
+                            <span class="font-bold text-primary" x-text="score.totalScore.toLocaleString()"></span>
+                        </div>
+                    </li>
+                </template>
+                <li x-show="!currentRoundScoreboard?.playerScores || currentRoundScoreboard.playerScores.length === 0"
+                    class="p-4 text-center text-gray-400 bg-gray-800/70 rounded-lg">
+                    No scores available for this round
+                </li>
+            </ul>
+        </div>
+
+        <!-- Progress Bar -->
+        <div x-show="gameState.totalRounds > 1" class="mt-6 text-center">
+            <p class="text-primary-dark font-bold mb-2">Game Progress</p>
+            <div class="h-2 bg-secondary-dark rounded-full mb-2 overflow-hidden">
+                <div class="h-full bg-accent rounded-full transition-all duration-500"
+                     :style="{ width: ((currentRoundScoreboard?.roundNumber || 0) / (gameState.totalRounds || 1) * 100) + '%' }"></div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-400">
+                <span>Round <span x-text="currentRoundScoreboard?.roundNumber || '?'"></span></span>
+                <span><span x-text="gameState.totalRounds || '?'"></span> Rounds total</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-8">
+            <!-- Continue Button (not last round) -->
+            <button x-show="isHost && !isLastRound()" @click="startNextRound()"
+                    class="px-8 py-4 bg-neutral-dark text-primary-dark font-bold rounded-full shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                Continue to Next Round
+            </button>
+
+            <!-- Game Over Buttons (last round) -->
+            <div x-show="isLastRound()" class="flex flex-col justify-center space-y-6">
+                <button x-show="isHost" @click="startGame()"
+                        class="px-8 py-4 bg-accent text-primary font-bold rounded-full shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                    Go again!
+                </button>
+
+                <button x-show="isHost" @click="returnToLobby()"
+                        class="mx-auto max-w-96 px-8 py-4 bg-primary-light text-neutral-light font-bold rounded-full shadow-lg hover:-translate-y-1 hover:shadow-xl transition-all duration-300 opacity-50">
+                    Return to Lobby
+                </button>
+
+
+                <!-- Waiting For Host Message (shown to non-hosts) -->
+                <div x-show="!isHost" class="px-8 py-4 bg-secondary-dark text-primary-dark font-bold rounded-full shadow-lg">
+                    Waiting for host to continue...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

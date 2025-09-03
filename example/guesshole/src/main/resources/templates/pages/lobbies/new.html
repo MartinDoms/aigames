@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(jsRoot='lobby-form')}"></head>
+
+<body class="bg-neutral min-h-screen flex flex-col">
+
+<nav th:replace="~{fragments/nav :: nav}"></nav>
+
+<div class="container mx-auto px-4 py-12 flex-grow">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-primary mb-3">Create Your Lobby</h1>
+            <p class="text-primary-dark">Set up your game room and invite friends to join the challenge!</p>
+        </div>
+
+        <!-- Card Container -->
+        <div class="bg-neutral-light rounded-xl shadow-lg p-8 border border-neutral-dark">
+            <form
+                    id="lobbyForm"
+                    x-data="lobbyForm()"
+                    @submit.prevent="submitForm"
+                    class="space-y-6"
+            >
+                <!-- Player Name and Avatar Field -->
+                <div>
+                    <label class="block font-semibold text-primary mb-2">Your Name and Avatar:</label>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-1 relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-light" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <input
+                                    type="text"
+                                    id="playerName"
+                                    name="playerName"
+                                    x-model="formData.playerName"
+                                    required
+                                    placeholder="Enter your display name"
+                                    class="w-full pl-10 pr-4 py-3 bg-neutral border border-neutral-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                            >
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-16 h-16 rounded-full bg-cover bg-center border-4 border-accent shadow-lg"
+                                 :style="`background-image: url('/images/avatars/${avatarPicker.selectedAvatarId}.webp')`"
+                                 @click="avatarPicker.openAvatarPicker()">
+                            </div>
+                            <button type="button"
+                                    class="bg-secondary hover:bg-secondary-dark text-primary py-2 px-4 rounded-lg transition-colors duration-200"
+                                    @click="avatarPicker.openAvatarPicker()">
+                                Choose Avatar
+                            </button>
+                        </div>
+                    </div>
+                    <p class="mt-1 text-sm text-primary-light">This is how other players will see you in the game</p>
+                </div>
+
+                <!-- Lobby Name Field -->
+                <div>
+                    <label for="name" class="block font-semibold text-primary mb-2">Lobby Name:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-light" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                x-model="formData.name"
+                                required
+                                placeholder="Give your game a catchy name"
+                                class="w-full pl-10 pr-4 py-3 bg-neutral border border-neutral-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                        >
+                    </div>
+                </div>
+
+                <!-- Privacy Setting Field -->
+                <div>
+                    <label for="privacy" class="block font-semibold text-primary mb-2">Privacy Setting:</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-light" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <select
+                                id="privacy"
+                                name="privacy"
+                                x-model="formData.privacy"
+                                required
+                                class="w-full pl-10 pr-4 py-3 appearance-none bg-neutral border border-neutral-dark rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                        >
+                            <option value="PRIVATE">Private (By invitation only)</option>
+                            <option disabled value="PUBLIC">Public (Anyone can join) - coming soon</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary-light" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="mt-1 text-sm text-primary-light">Determine who can access your game lobby</p>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-neutral-dark my-2"></div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button
+                            type="submit"
+                            class="w-full py-3 px-4 bg-accent hover:bg-accent-dark text-primary-dark font-bold rounded-lg shadow-md transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-dark"
+                            :disabled="isSubmitting"
+                    >
+                        <span x-show="!isSubmitting" class="flex items-center justify-center">
+                            Create Lobby
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <span x-show="isSubmitting" class="flex items-center justify-center">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary-dark" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Creating...
+                        </span>
+                    </button>
+                </div>
+
+                <div
+                        x-data="avatarPicker"
+                        x-show="avatarPicker.showAvatarPicker"
+                        x-cloak
+                        class="fixed inset-0 bg-primary bg-opacity-75 flex items-center justify-center z-50 overflow-hidden"
+                        @click.self="cancelAvatarSelection()">
+
+                    <div th:replace="~{fragments/lobby/avatar-picker :: avatar-picker}"></div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-8 bg-secondary-light text-primary-dark p-4 rounded-lg border border-secondary flex items-start">
+            <div class="flex-shrink-0 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div>
+                <h3 class="font-semibold">What happens next?</h3>
+                <p class="text-sm">After creating a lobby, you'll receive a unique link you can share with friends to invite them to your game.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
