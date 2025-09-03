@@ -1,0 +1,11 @@
+{
+  "src/js/landing.js": {
+    "file": "js/landing-D03OR7mV.js",
+    "name": "landing",
+    "src": "src/js/landing.js",
+    "isEntry": true,
+    "css": [
+      "css/landing-DcHQXm4H.css"
+    ]
+  }
+}

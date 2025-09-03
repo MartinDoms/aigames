@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Games - Fun Casual Games</title>
+    
+    <!-- Vite generated CSS -->
+    <link rel="stylesheet" th:href="@{/css/landing-{hash}.css}" href="/css/landing.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div x-data="gamesLanding" class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">🎮 AI Games</h1>
+            <p class="text-xl text-gray-600">Fun, casual games for quick entertainment</p>
+        </header>
+
+        <!-- Loading State -->
+        <div x-show="loading" class="text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-4 text-gray-600">Loading games...</p>
+        </div>
+
+        <!-- Error State -->
+        <div x-show="error" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+            <p x-text="error"></p>
+        </div>
+
+        <!-- Games Grid -->
+        <div x-show="!loading && !error" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="game in games" :key="game.id">
+                <div class="game-card">
+                    <div class="flex items-center mb-4">
+                        <span class="text-3xl mr-3" x-text="getCategoryIcon(game.category)"></span>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800" x-text="game.displayName"></h3>
+                            <span class="text-sm text-gray-500 capitalize" x-text="game.category"></span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4" x-text="game.description"></p>
+                    
+                    <button 
+                        @click="playGame(game.name)"
+                        class="btn-primary w-full">
+                        Play Now
+                    </button>
+                </div>
+            </template>
+        </div>
+
+        <!-- Empty State -->
+        <div x-show="!loading && !error && games.length === 0" class="text-center py-12">
+            <p class="text-gray-600 text-lg">No games available at the moment.</p>
+            <p class="text-gray-500 mt-2">Check back soon for new games!</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-16 pt-8 border-t border-gray-200">
+            <p class="text-gray-500">
+                Built with Spring Boot, Alpine.js, and TailwindCSS
+            </p>
+        </footer>
+    </div>
+
+    <!-- Vite generated JS -->
+    <script type="module" th:src="@{/js/landing-{hash}.js}" src="/js/landing.js"></script>
+</body>
+</html>
