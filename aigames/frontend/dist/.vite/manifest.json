@@ -1,11 +1,31 @@
 {
+  "_module.esm-!~{003}~.js": {
+    "file": "css/module-BpBKqQfe.css",
+    "src": "_module.esm-!~{003}~.js"
+  },
+  "_module.esm-DWwwSYNZ.js": {
+    "file": "js/module.esm-DWwwSYNZ.js",
+    "name": "module.esm",
+    "css": [
+      "css/module-BpBKqQfe.css"
+    ]
+  },
   "src/js/landing.js": {
-    "file": "js/landing-D03OR7mV.js",
+    "file": "js/landing-BRCuaf5J.js",
     "name": "landing",
     "src": "src/js/landing.js",
     "isEntry": true,
-    "css": [
-      "css/landing-DcHQXm4H.css"
+    "imports": [
+      "_module.esm-DWwwSYNZ.js"
+    ]
+  },
+  "src/js/word-ladder.js": {
+    "file": "js/word-ladder-LMwHm1nT.js",
+    "name": "word-ladder",
+    "src": "src/js/word-ladder.js",
+    "isEntry": true,
+    "imports": [
+      "_module.esm-DWwwSYNZ.js"
     ]
   }
 }
